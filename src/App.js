@@ -1,24 +1,32 @@
 import './App.css';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import {BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom';
+import {Home} from "./pages/Home";
+import { Profile } from './pages/Profile';
+import { QueryClient, QueryClientProvider} from "@tanstack/react-query"
+
 
 function App() {
-  const [data, setData] = useState("");
+  const client = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
   
-  const exuse = (forwhat) => {
-    axios.get(`https://excuser-three.vercel.app/v1/excuse/${forwhat}/`).then((res) => {
-      setData(res.data[0].excuse);
-    });
-  };
-
-
 
   return (
     <div className="App">
-      <button onClick={() => {exuse("party")}}>Party</button>
-      <button onClick={() => {exuse("family")}}>Family</button>
-      <button onClick={() => {exuse("office")}}>Office</button>
-      <p>{data}</p>
+      <QueryClientProvider client={client}>
+        <Router>
+          <Link to="/">Home</Link>
+          <Link to="/profile">Profile</Link><br></br>
+          <Routes>
+            <Route path='/' element={<Home/>}/>
+            <Route path='/profile' element={<Profile/>}/>
+          </Routes>
+        </Router>
+      </QueryClientProvider>  
     </div>
   );
 }
